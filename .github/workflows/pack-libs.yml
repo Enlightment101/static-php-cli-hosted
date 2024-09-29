@@ -26,11 +26,7 @@ jobs:
     strategy:
       matrix:
         runner:
-          - ubuntu-latest
-          - ubuntu-20.04
-          - macos-13
           - windows-2019
-          - macos-14
         lib:
           - zlib
           - pkg-config
@@ -56,21 +52,6 @@ jobs:
           - readline
           - unixodbc
           - xz
-        exclude:
-          - { runner: "windows-2019", lib: "pkg-config" }
-          - { runner: "windows-2019", lib: "gmp" }
-          - { runner: "windows-2019", lib: "liblz4" }
-          - { runner: "windows-2019", lib: "brotli" }
-          - { runner: "windows-2019", lib: "libargon2" }
-          - { runner: "windows-2019", lib: "libiconv" }
-          - { runner: "windows-2019", lib: "libtiff" }
-          - { runner: "windows-2019", lib: "icu" }
-          - { runner: "windows-2019", lib: "libcares" }
-          - { runner: "windows-2019", lib: "libevent" }
-          - { runner: "windows-2019", lib: "libsodium" }
-          - { runner: "windows-2019", lib: "ncurses" }
-          - { runner: "windows-2019", lib: "readline" }
-          - { runner: "windows-2019", lib: "unixodbc" }
       fail-fast: false
     steps:
       - name: "Process env string"
@@ -159,12 +140,6 @@ jobs:
         with:
           path: dist/${{ matrix.lib }}-${{ steps.process-env.outputs.ARCH }}-${{ steps.process-env.outputs.OS }}.txz
           name: ${{ matrix.lib }}-${{ steps.process-env.outputs.ARCH }}-${{ steps.process-env.outputs.OS }}
-
-      - name: "Upload to current release event"
-        if: github.repository == 'static-php/static-php-cli-hosted' && startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/${{ matrix.lib }}-${{ steps.process-env.outputs.ARCH }}-${{ steps.process-env.outputs.OS }}.txz
 
       - name: "Update latest release of hosted repo"
         if: github.repository == 'static-php/static-php-cli-hosted' && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
